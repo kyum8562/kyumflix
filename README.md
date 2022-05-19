@@ -2,3 +2,4 @@
 
 - React with typescript
 - Styled Components
+- React Query
