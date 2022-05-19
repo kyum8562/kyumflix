@@ -1,8 +1,8 @@
 function Home(){
 
     return(
-        <div>
-            hi
+        <div style={{backgroundColor:"white"}}>
+            Home
         </div>
     );
 }
