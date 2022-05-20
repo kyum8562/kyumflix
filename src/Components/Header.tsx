@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { motion, useAnimation, useViewportScroll } from 'framer-motion';
-import { Link,  useMatch } from 'react-router-dom';
+import { Link,  useMatch, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 const Nav = styled(motion.nav)`
     display: flex;
@@ -74,7 +75,7 @@ const Circle = styled(motion.span)`
     background-color: ${props => props.theme.red};
 `;
 
-const Search = styled.span`
+const Search = styled.form`
     color: white;
     display: flex;
     align-items: center;
@@ -101,6 +102,11 @@ const navVariants = {
         backgroundColor: "rgba(0, 0, 0, 1)"
     },
 }
+
+interface IForm {
+    keyword: string;
+}
+
 function Header(){
     const [searchOpen, setSearchOpen] = useState(false);
     const inputAnimation = useAnimation();
@@ -128,7 +134,12 @@ function Header(){
                 navAnimation.start("top");
             }
         })
-    }, [scrollY]);
+    }, [scrollY, navAnimation]);
+    const navigate = useNavigate();
+    const { register, handleSubmit } = useForm<IForm>();
+    const onValid = (data: IForm) => {
+        navigate(`/search?keyword=${data.keyword}`);
+    };
     return(
         <Nav animate={navAnimation}
             variants={navVariants}
@@ -159,7 +170,7 @@ function Header(){
                 </Items>
             </Col>
             <Col>
-                <Search>
+                <Search onSubmit={handleSubmit(onValid)}>
                     {/* <Link to ="/search"> */}
                         <motion.svg
                             onClick={toggleSearch}
@@ -174,6 +185,7 @@ function Header(){
                             ></path>
                         </motion.svg>  
                     <Input
+                        {...register("keyword", { required: true, minLength: 2 })}
                         animate={inputAnimation}
                         initial={{scaleX: 0}}
                         transition={{type:"linear"}}
